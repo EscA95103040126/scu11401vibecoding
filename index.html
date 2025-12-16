@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>程式設計（一）期末 Vibe Coding 練習</title>
+    <style>
+        :root {
+            --bg-color: #1e1e2e;
+            --card-bg: #2a2a3c;
+            --text-color: #cdd6f4;
+            --accent-color: #f5c2e7; /* Pinkish for Vibe */
+            --success-color: #a6e3a1;
+            --error-color: #f38ba8;
+            --button-bg: #89b4fa;
+            --button-text: #1e1e2e;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1, h2 {
+            color: var(--accent-color);
+            text-align: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            border-left: 5px solid var(--accent-color);
+        }
+
+        .question-type {
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #fab387;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        code {
+            background-color: #11111b;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: #f9e2af;
+        }
+
+        pre {
+            background-color: #11111b;
+            padding: 10px;
+            border-radius: 8px;
+            overflow-x: auto;
+            color: #f9e2af;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            border: 1px solid #45475a;
+            background-color: #313244;
+            color: white;
+            font-family: 'Consolas', monospace;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-right: 10px;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        button.show-answer {
+            background-color: #45475a;
+            color: #cdd6f4;
+        }
+
+        .feedback {
+            margin-top: 10px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .answer-area {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #313244;
+            border-radius: 6px;
+            display: none;
+            border: 1px dashed var(--accent-color);
+        }
+
+        .progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 5px;
+            background-color: var(--accent-color);
+            width: 0%;
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="progress" id="progressBar"></div>
+
+    <div class="container">
+        <h1>🐍 Python Vibe Coding 期末練習</h1>
+        <p style="text-align: center; margin-bottom: 30px;">範圍：變數、迴圈、串列、字典、函數 (Ch1-Ch11)</p>
+
+        <div id="quiz-container">
+            </div>
+
+    </div>
+
+    <script>
+        const quizData = [
+            // Chapter 2-3 Basics
+            {
+                type: "填空題",
+                question: "在 Python 中，如果要把 `print()` 輸出的多個項目之間用 `#` 符號隔開，應該設定哪個參數？",
+                code: "print('A', 'B', ____='#')",
+                answer: ["sep"],
+                explanation: "`sep` 參數用來設定分隔符號，預設是空白。"
+            },
+            {
+                type: "填空題",
+                question: "請填入運算子，計算 2 的 3 次方（即 8）。",
+                code: "result = 2 ____ 3",
+                answer: ["**"],
+                explanation: "`**` 是 Python 的次方運算子。"
+            },
+            // Chapter 6 Lists
+            {
+                type: "除錯題",
+                question: "這段程式碼想要取得串列的「最後一個」元素，請修正索引值。",
+                code: "my_list = [10, 20, 30]\nlast_item = my_list[3]  # Index out of range",
+                answer: ["my_list[-1]", "my_list[2]"],
+                checkFunc: (input) => input.includes("-1") || input.includes("2"),
+                explanation: "索引值從 0 開始，最後一個元素索引是 2，或是使用負索引 `-1`。"
+            },
+            {
+                type: "填空題",
+                question: "使用哪一個方法(Method)可以將元素加到串列的「尾端」？",
+                code: "numbers = [1, 2]\nnumbers.______(3)",
+                answer: ["append"],
+                explanation: "`append()` 用於在串列末尾添加元素。"
+            },
+            {
+                type: "填空題",
+                question: "請填寫切片語法，將字串反轉。",
+                code: "s = 'Python'\nreversed_s = s[_______]",
+                answer: ["::-1"],
+                explanation: "`[::-1]` 是 Python 中常見的反轉序列切片寫法。"
+            },
+            // Chapter 7 Loops
+            {
+                type: "除錯題",
+                question: "這段 `for` 迴圈語法有誤，請修正第一行。",
+                code: "for i in range(5)\n    print(i)",
+                answer: ["for i in range(5):"],
+                checkFunc: (input) => input.includes(":") && input.includes("range(5)"),
+                explanation: "Python 的複合語句（如 if, for, def）結尾必須要加上冒號 `:`。"
+            },
+            {
+                type: "填空題",
+                question: "在迴圈中，如果想要「跳過本次執行，直接進入下一圈」，要使用哪個關鍵字？",
+                answer: ["continue"],
+                explanation: "`continue` 會跳過剩下的程式碼，直接進行下一次迴圈迭代。"
+            },
+            // Chapter 9 Dictionaries
+            {
+                type: "實作題",
+                question: "建立一個字典，包含 key 為 'name' 值為 'Sullyoon'，並印出 'name' 對應的值。",
+                code: "# 請寫出完整的建立與列印過程",
+                answer: ["my_dict = {'name': 'Sullyoon'}\nprint(my_dict['name'])"],
+                isCode: true,
+                explanation: "字典定義使用大括號 `{}`，存取使用 `dict[key]`。"
+            },
+            {
+                type: "填空題",
+                question: "要刪除字典中特定的鍵值對，可以使用哪個關鍵字？",
+                code: "data = {'a': 1, 'b': 2}\n____ data['a']",
+                answer: ["del"],
+                explanation: "`del` 關鍵字可以用來刪除變數或集合中的元素。"
+            },
+            // Chapter 11 Functions
+            {
+                type: "除錯題",
+                question: "定義函數時語法錯誤，請修正。",
+                code: "function say_hello():\n    print('Hello')",
+                answer: ["def say_hello():"],
+                checkFunc: (input) => input.startsWith("def "),
+                explanation: "Python 定義函數的關鍵字是 `def`，不是 function。"
+            },
+            {
+                type: "填空題",
+                question: "Python 支援匿名函數，使用的關鍵字是什麼？",
+                code: "square = ______ x: x * x",
+                answer: ["lambda"],
+                explanation: "`lambda` 用於建立簡單的、單行的匿名函數。"
+            },
+            {
+                type: "實作題",
+                question: "寫一個函數 `is_even(n)`，如果 n 是偶數回傳 True，否則回傳 False。",
+                code: "",
+                answer: ["def is_even(n):\n    return n % 2 == 0"],
+                isCode: true,
+                explanation: "使用 `%` 取餘數運算，`n % 2 == 0` 即為偶數。"
+            }
+        ];
+
+        const container = document.getElementById('quiz-container');
+        const progressBar = document.getElementById('progressBar');
+
+        function renderQuiz() {
+            quizData.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+
+                let inputHtml = '';
+                if (item.isCode) {
+                    inputHtml = `<textarea rows="4" id="ans-${index}" placeholder="在此輸入你的程式碼..."></textarea>`;
+                } else {
+                    inputHtml = `<input type="text" id="ans-${index}" placeholder="輸入你的答案">`;
+                }
+
+                const codeBlock = item.code ? `<pre>${item.code}</pre>` : '';
+
+                card.innerHTML = `
+                    <span class="question-type">Q${index + 1} • ${item.type}</span>
+                    <h3>${item.question}</h3>
+                    ${codeBlock}
+                    ${inputHtml}
+                    <div style="margin-top: 15px;">
+                        <button onclick="checkAnswer(${index})">檢查 Vibe</button>
+                        <button class="show-answer" onclick="toggleAnswer(${index})">看答案</button>
+                    </div>
+                    <div id="feedback-${index}" class="feedback"></div>
+                    <div id="answer-${index}" class="answer-area">
+                        <strong>參考答案：</strong><br>
+                        <pre>${item.answer[0]}</pre>
+                        <p style="font-size: 0.9em; color: #ccc;">${item.explanation}</p>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function checkAnswer(index) {
+            const item = quizData[index];
+            const userAns = document.getElementById(`ans-${index}`).value.trim();
+            const feedback = document.getElementById(`feedback-${index}`);
+            
+            let isCorrect = false;
+
+            if (item.checkFunc) {
+                isCorrect = item.checkFunc(userAns);
+            } else if (item.isCode) {
+                // For code questions, we can't strict check easily, so we give a vibe pass
+                // unless it's empty
+                if (userAns.length > 5) {
+                    feedback.style.color = "#f9e2af"; // Warning color
+                    feedback.textContent = "實作題請自我對照「看答案」，Vibe 正確就好！";
+                    feedback.style.display = 'block';
+                    return;
+                } else {
+                    isCorrect = false;
+                }
+            } else {
+                isCorrect = item.answer.includes(userAns) || item.answer.includes(userAns.replace(/'/g, '"'));
+            }
+
+            if (isCorrect) {
+                feedback.style.color = "var(--success-color)";
+                feedback.textContent = "✨ 答對了！Vibe check passed.";
+            } else {
+                feedback.style.color = "var(--error-color)";
+                feedback.textContent = "❌ 再試試看？或者直接看答案學起來。";
+            }
+            feedback.style.display = 'block';
+            updateProgress();
+        }
+
+        function toggleAnswer(index) {
+            const ansDiv = document.getElementById(`answer-${index}`);
+            if (ansDiv.style.display === 'none' || ansDiv.style.display === '') {
+                ansDiv.style.display = 'block';
+            } else {
+                ansDiv.style.display = 'none';
+            }
+        }
+
+        function updateProgress() {
+            // Simple progress tracking
+            const inputs = document.querySelectorAll('input, textarea');
+            let filled = 0;
+            inputs.forEach(input => {
+                if(input.value.trim() !== '') filled++;
+            });
+            const percent = (filled / quizData.length) * 100;
+            progressBar.style.width = percent + '%';
+        }
+
+        renderQuiz();
+    </script>
+</body>
+</html>
