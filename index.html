@@ -3,21 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>程式設計（一）期末 Vibe Coding 練習</title>
+    <title>Python 期末隨機題庫系統</title>
     <style>
         :root {
             --bg-color: #1e1e2e;
             --card-bg: #2a2a3c;
             --text-color: #cdd6f4;
-            --accent-color: #f5c2e7; /* Pinkish for Vibe */
-            --success-color: #a6e3a1;
-            --error-color: #f38ba8;
+            --accent-color: #f5c2e7; /* Pinkish */
+            --highlight: #cba6f7;
+            --success: #a6e3a1;
+            --error: #f38ba8;
             --button-bg: #89b4fa;
             --button-text: #1e1e2e;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             line-height: 1.6;
@@ -28,55 +29,80 @@
             align-items: center;
         }
 
-        h1, h2 {
-            color: var(--accent-color);
+        .header-area {
             text-align: center;
+            margin-bottom: 20px;
         }
 
-        .container {
-            max-width: 800px;
-            width: 100%;
+        h1 { color: var(--accent-color); margin-bottom: 5px; }
+        
+        .controls {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
         }
+
+        .refresh-btn {
+            background-color: var(--highlight);
+            color: var(--button-text);
+            padding: 10px 20px;
+            border-radius: 25px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(203, 166, 247, 0.4);
+            transition: transform 0.2s;
+        }
+
+        .refresh-btn:hover { transform: scale(1.05); }
+
+        .container { max-width: 800px; width: 100%; }
 
         .card {
             background-color: var(--card-bg);
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
             border-left: 5px solid var(--accent-color);
+            animation: fadeIn 0.5s ease;
         }
 
-        .question-type {
-            font-size: 0.85em;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .tag {
+            font-size: 0.75em;
+            background-color: #45475a;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-right: 5px;
             color: #fab387;
-            margin-bottom: 5px;
-            display: block;
         }
 
         code {
             background-color: #11111b;
             padding: 2px 5px;
             border-radius: 4px;
-            font-family: 'Consolas', 'Monaco', monospace;
+            font-family: 'Consolas', monospace;
             color: #f9e2af;
         }
 
         pre {
             background-color: #11111b;
-            padding: 10px;
+            padding: 15px;
             border-radius: 8px;
             overflow-x: auto;
             color: #f9e2af;
+            border: 1px solid #45475a;
         }
 
         input[type="text"], textarea {
             width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            margin-bottom: 10px;
+            padding: 12px;
+            margin: 10px 0;
             border-radius: 6px;
             border: 1px solid #45475a;
             background-color: #313244;
@@ -85,256 +111,299 @@
             box-sizing: border-box;
         }
 
-        button {
+        .btn-group button {
             background-color: var(--button-bg);
             color: var(--button-text);
             border: none;
-            padding: 10px 20px;
+            padding: 8px 16px;
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
             margin-right: 10px;
-            transition: background 0.3s;
         }
 
-        button:hover {
-            opacity: 0.9;
-        }
+        .btn-group button.show-ans { background-color: #45475a; color: #fff; }
 
-        button.show-answer {
-            background-color: #45475a;
-            color: #cdd6f4;
-        }
-
-        .feedback {
-            margin-top: 10px;
-            font-weight: bold;
-            display: none;
-        }
-
-        .answer-area {
+        .feedback-area {
             margin-top: 10px;
             padding: 10px;
-            background-color: #313244;
             border-radius: 6px;
             display: none;
-            border: 1px dashed var(--accent-color);
         }
-
-        .progress {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 5px;
-            background-color: var(--accent-color);
-            width: 0%;
-            transition: width 0.3s;
+        
+        .answer-box {
+            margin-top: 10px;
+            padding: 15px;
+            background-color: #181825;
+            border-radius: 6px;
+            display: none;
+            border-left: 3px solid #f9e2af;
         }
     </style>
 </head>
 <body>
 
-    <div class="progress" id="progressBar"></div>
-
-    <div class="container">
-        <h1>🐍 Python Vibe Coding 期末練習</h1>
-        <p style="text-align: center; margin-bottom: 30px;">範圍：變數、迴圈、串列、字典、函數 (Ch1-Ch11)</p>
-
-        <div id="quiz-container">
-            </div>
-
+    <div class="header-area">
+        <h1>🎲 Python 期末隨機題庫</h1>
+        <p>每次點擊「換一組題目」，隨機抽取 8 題進行練習</p>
+        <div class="controls">
+            <button class="refresh-btn" onclick="generateNewQuiz()">🔄 換一組題目 (Refresh)</button>
+        </div>
     </div>
 
+    <div class="container" id="quiz-container">
+        </div>
+
     <script>
-        const quizData = [
-            // Chapter 2-3 Basics
+        // ==========================================
+        // 核心題庫 (Data Source) - 這裡可以無限擴充
+        // ==========================================
+        const questionBank = [
+            // --- Ch1-3 基礎 & 運算 ---
             {
-                type: "填空題",
-                question: "在 Python 中，如果要把 `print()` 輸出的多個項目之間用 `#` 符號隔開，應該設定哪個參數？",
-                code: "print('A', 'B', ____='#')",
-                answer: ["sep"],
-                explanation: "`sep` 參數用來設定分隔符號，預設是空白。"
+                tags: ["Ch2", "基礎"],
+                type: "填空",
+                q: "Python 中計算「整數除法」（取商數）的運算子是？",
+                code: "print(10 ___ 3) # 結果為 3",
+                ans: ["//"],
+                exp: "// 是整數除法，% 是取餘數。"
             },
             {
-                type: "填空題",
-                question: "請填入運算子，計算 2 的 3 次方（即 8）。",
-                code: "result = 2 ____ 3",
-                answer: ["**"],
-                explanation: "`**` 是 Python 的次方運算子。"
-            },
-            // Chapter 6 Lists
-            {
-                type: "除錯題",
-                question: "這段程式碼想要取得串列的「最後一個」元素，請修正索引值。",
-                code: "my_list = [10, 20, 30]\nlast_item = my_list[3]  # Index out of range",
-                answer: ["my_list[-1]", "my_list[2]"],
-                checkFunc: (input) => input.includes("-1") || input.includes("2"),
-                explanation: "索引值從 0 開始，最後一個元素索引是 2，或是使用負索引 `-1`。"
+                tags: ["Ch2", "基礎"],
+                type: "填空",
+                q: "計算 5 的 3 次方。",
+                code: "x = 5 ___ 3",
+                ans: ["**"],
+                exp: "** 代表次方運算。"
             },
             {
-                type: "填空題",
-                question: "使用哪一個方法(Method)可以將元素加到串列的「尾端」？",
-                code: "numbers = [1, 2]\nnumbers.______(3)",
-                answer: ["append"],
-                explanation: "`append()` 用於在串列末尾添加元素。"
+                tags: ["Ch2", "輸出"],
+                type: "填空",
+                q: "print 函數預設換行，若要改為不換行並以空白結尾，需設定哪個參數？",
+                code: "print('Hello', ___=' ')",
+                ans: ["end"],
+                exp: "end 參數預設為 '\n'，設為 '' 或 ' ' 可不換行。"
+            },
+            
+            // --- Ch6 串列 List ---
+            {
+                tags: ["Ch6", "List"],
+                type: "填空",
+                q: "取得串列 my_list 的長度（元素個數）。",
+                code: "length = ___(my_list)",
+                ans: ["len"],
+                exp: "len() 函數可用於字串、串列、字典等。"
             },
             {
-                type: "填空題",
-                question: "請填寫切片語法，將字串反轉。",
-                code: "s = 'Python'\nreversed_s = s[_______]",
-                answer: ["::-1"],
-                explanation: "`[::-1]` 是 Python 中常見的反轉序列切片寫法。"
-            },
-            // Chapter 7 Loops
-            {
-                type: "除錯題",
-                question: "這段 `for` 迴圈語法有誤，請修正第一行。",
-                code: "for i in range(5)\n    print(i)",
-                answer: ["for i in range(5):"],
-                checkFunc: (input) => input.includes(":") && input.includes("range(5)"),
-                explanation: "Python 的複合語句（如 if, for, def）結尾必須要加上冒號 `:`。"
+                tags: ["Ch6", "List"],
+                type: "填空",
+                q: "移除串列中指定的元素值（例如移除第一個出現的 5）。",
+                code: "nums = [1, 5, 2, 5]\nnums.____(5)",
+                ans: ["remove"],
+                exp: "remove(x) 移除第一個值為 x 的元素；pop() 則是依索引移除。"
             },
             {
-                type: "填空題",
-                question: "在迴圈中，如果想要「跳過本次執行，直接進入下一圈」，要使用哪個關鍵字？",
-                answer: ["continue"],
-                explanation: "`continue` 會跳過剩下的程式碼，直接進行下一次迴圈迭代。"
+                tags: ["Ch6", "List"],
+                type: "除錯",
+                q: "這行程式碼想在索引 1 的位置插入數字 99，語法有誤。",
+                code: "my_list = [10, 20]\nmy_list.add(1, 99)",
+                ans: ["my_list.insert(1, 99)"],
+                exp: "List 沒有 add 方法，插入要用 insert(index, value)。"
             },
-            // Chapter 9 Dictionaries
             {
-                type: "實作題",
-                question: "建立一個字典，包含 key 為 'name' 值為 'Sullyoon'，並印出 'name' 對應的值。",
-                code: "# 請寫出完整的建立與列印過程",
-                answer: ["my_dict = {'name': 'Sullyoon'}\nprint(my_dict['name'])"],
+                tags: ["Ch6", "Slicing"],
+                type: "填空",
+                q: "取出串列的前三個元素。",
+                code: "items = [1, 2, 3, 4, 5]\nsub = items[____]",
+                ans: [":3", "0:3"],
+                exp: "切片語法 [start:end]，不含 end。"
+            },
+
+            // --- Ch7 迴圈 Loop ---
+            {
+                tags: ["Ch7", "Loop"],
+                type: "填空",
+                q: "range 函數產生 0 到 4 的數字。",
+                code: "for i in range(____):",
+                ans: ["5"],
+                exp: "range(n) 會產生 0 到 n-1。"
+            },
+            {
+                tags: ["Ch7", "Loop"],
+                type: "填空",
+                q: "強制「跳出」並結束整個迴圈的關鍵字。",
+                code: "while True:\n    if x > 10: ____",
+                ans: ["break"],
+                exp: "break 結束迴圈；continue 跳過本次迭代。"
+            },
+             {
+                tags: ["Ch7", "Loop"],
+                type: "實作",
+                q: "寫一個迴圈計算 1 加到 10 的總和。",
+                code: "# 請寫出完整迴圈",
+                ans: ["total = 0\nfor i in range(1, 11):\n    total += i\nprint(total)"],
                 isCode: true,
-                explanation: "字典定義使用大括號 `{}`，存取使用 `dict[key]`。"
+                exp: "使用 range(1, 11) 包含 1 不包含 11，累加變數需先初始化。"
+            },
+
+            // --- Ch9 字典 Dictionary ---
+            {
+                tags: ["Ch9", "Dict"],
+                type: "填空",
+                q: "取得字典所有的 Key（鍵）。",
+                code: "d = {'a': 1, 'b': 2}\nkeys = d.____()",
+                ans: ["keys"],
+                exp: "d.keys() 回傳鍵，d.values() 回傳值。"
             },
             {
-                type: "填空題",
-                question: "要刪除字典中特定的鍵值對，可以使用哪個關鍵字？",
-                code: "data = {'a': 1, 'b': 2}\n____ data['a']",
-                answer: ["del"],
-                explanation: "`del` 關鍵字可以用來刪除變數或集合中的元素。"
+                tags: ["Ch9", "Dict"],
+                type: "填空",
+                q: "安全地取得字典的值，如果 Key 不存在則回傳 None（不會報錯）。",
+                code: "val = my_dict.____('key_name')",
+                ans: ["get"],
+                exp: "dict['key'] 若不存在會報錯，dict.get('key') 則回傳 None 或預設值。"
             },
-            // Chapter 11 Functions
+
+            // --- Ch11 函數 Function ---
             {
-                type: "除錯題",
-                question: "定義函數時語法錯誤，請修正。",
-                code: "function say_hello():\n    print('Hello')",
-                answer: ["def say_hello():"],
-                checkFunc: (input) => input.startsWith("def "),
-                explanation: "Python 定義函數的關鍵字是 `def`，不是 function。"
-            },
-            {
-                type: "填空題",
-                question: "Python 支援匿名函數，使用的關鍵字是什麼？",
-                code: "square = ______ x: x * x",
-                answer: ["lambda"],
-                explanation: "`lambda` 用於建立簡單的、單行的匿名函數。"
+                tags: ["Ch11", "Func"],
+                type: "填空",
+                q: "定義函數時，用來回傳結果給呼叫者的關鍵字。",
+                code: "def add(a, b):\n    ____ a + b",
+                ans: ["return"],
+                exp: "沒有 return 的函數預設回傳 None。"
             },
             {
-                type: "實作題",
-                question: "寫一個函數 `is_even(n)`，如果 n 是偶數回傳 True，否則回傳 False。",
-                code: "",
-                answer: ["def is_even(n):\n    return n % 2 == 0"],
+                tags: ["Ch11", "Lambda"],
+                type: "實作",
+                q: "使用 map 和 lambda 將串列 [1, 2, 3] 的每個元素平方。",
+                code: "nums = [1, 2, 3]\nresult = list(map(__________))",
+                ans: ["lambda x: x**2, nums"],
                 isCode: true,
-                explanation: "使用 `%` 取餘數運算，`n % 2 == 0` 即為偶數。"
+                exp: "map(func, iterable)。Lambda寫法：lambda x: x**2。"
+            },
+            {
+                tags: ["Ch11", "Args"],
+                type: "填空",
+                q: "定義函數時，若要接收「任意數量」的位置參數(Tuple形式)，要加什麼符號？",
+                code: "def my_func(____args):",
+                ans: ["*"],
+                exp: "*args 接收任意數量參數轉為 Tuple；**kwargs 接收關鍵字參數轉為 Dictionary。"
+            },
+             {
+                tags: ["Ch9", "Set"],
+                type: "填空",
+                q: "將串列轉為「集合」以去除重複元素。",
+                code: "lst = [1, 2, 2, 3]\nunique = ____(lst)",
+                ans: ["set"],
+                exp: "set() 會建立集合，集合特性是不包含重複元素。"
             }
         ];
 
-        const container = document.getElementById('quiz-container');
-        const progressBar = document.getElementById('progressBar');
+        // ==========================================
+        // 系統邏輯 (System Logic)
+        // ==========================================
+        
+        // 洗牌演算法 (Fisher-Yates Shuffle)
+        function shuffleArray(array) {
+            let currentIndex = array.length, randomIndex;
+            // 當還有元素未洗牌時
+            while (currentIndex != 0) {
+                // 隨機選一個
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                // 交換
+                [array[currentIndex], array[randomIndex]] = [
+                    array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
 
-        function renderQuiz() {
-            quizData.forEach((item, index) => {
+        function generateNewQuiz() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = ''; // 清空舊題目
+
+            // 1. 複製題庫並洗牌
+            const shuffled = shuffleArray([...questionBank]);
+            
+            // 2. 取出前 8 題 (數量可自己改)
+            const selectedQuestions = shuffled.slice(0, 8);
+
+            // 3. 渲染畫面
+            selectedQuestions.forEach((item, index) => {
                 const card = document.createElement('div');
                 card.className = 'card';
+                
+                // 標籤生成
+                const tagsHtml = item.tags.map(t => `<span class="tag">${t}</span>`).join('');
+                
+                // 程式碼區塊
+                const codeHtml = item.code ? `<pre>${item.code}</pre>` : '';
 
+                // 輸入框 (一般 vs 實作)
                 let inputHtml = '';
                 if (item.isCode) {
-                    inputHtml = `<textarea rows="4" id="ans-${index}" placeholder="在此輸入你的程式碼..."></textarea>`;
+                    inputHtml = `<textarea rows="3" id="q-${index}" placeholder="在此輸入程式碼..."></textarea>`;
                 } else {
-                    inputHtml = `<input type="text" id="ans-${index}" placeholder="輸入你的答案">`;
+                    inputHtml = `<input type="text" id="q-${index}" placeholder="你的答案">`;
                 }
 
-                const codeBlock = item.code ? `<pre>${item.code}</pre>` : '';
-
                 card.innerHTML = `
-                    <span class="question-type">Q${index + 1} • ${item.type}</span>
-                    <h3>${item.question}</h3>
-                    ${codeBlock}
+                    <div style="margin-bottom:10px;">${tagsHtml} <span style="color:#6c7086; font-size:0.9em;">Question ${index + 1}</span></div>
+                    <h3 style="margin-top:0;">${item.q}</h3>
+                    ${codeHtml}
                     ${inputHtml}
-                    <div style="margin-top: 15px;">
-                        <button onclick="checkAnswer(${index})">檢查 Vibe</button>
-                        <button class="show-answer" onclick="toggleAnswer(${index})">看答案</button>
+                    <div class="btn-group">
+                        <button onclick="checkOne(${index}, '${item.ans[0]}', ${item.isCode || false})">檢查 Vibe</button>
+                        <button class="show-ans" onclick="document.getElementById('ans-${index}').style.display='block'">看答案</button>
                     </div>
-                    <div id="feedback-${index}" class="feedback"></div>
-                    <div id="answer-${index}" class="answer-area">
-                        <strong>參考答案：</strong><br>
-                        <pre>${item.answer[0]}</pre>
-                        <p style="font-size: 0.9em; color: #ccc;">${item.explanation}</p>
+                    <div id="fb-${index}" class="feedback-area"></div>
+                    <div id="ans-${index}" class="answer-box">
+                        <strong>參考答案：</strong> <code>${item.ans[0]}</code><br>
+                        <small style="color:#aaa;">${item.exp}</small>
                     </div>
                 `;
                 container.appendChild(card);
             });
+
+            // 滾動到頂部
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function checkAnswer(index) {
-            const item = quizData[index];
-            const userAns = document.getElementById(`ans-${index}`).value.trim();
-            const feedback = document.getElementById(`feedback-${index}`);
+        function checkOne(idx, correctAns, isCode) {
+            const userIn = document.getElementById(`q-${idx}`).value.trim();
+            const fb = document.getElementById(`fb-${idx}`);
             
-            let isCorrect = false;
+            fb.style.display = 'block';
 
-            if (item.checkFunc) {
-                isCorrect = item.checkFunc(userAns);
-            } else if (item.isCode) {
-                // For code questions, we can't strict check easily, so we give a vibe pass
-                // unless it's empty
-                if (userAns.length > 5) {
-                    feedback.style.color = "#f9e2af"; // Warning color
-                    feedback.textContent = "實作題請自我對照「看答案」，Vibe 正確就好！";
-                    feedback.style.display = 'block';
-                    return;
+            if (isCode) {
+                // 實作題不嚴格檢查，只確認有無輸入
+                if (userIn.length > 3) {
+                    fb.style.backgroundColor = 'rgba(166, 227, 161, 0.2)';
+                    fb.style.color = 'var(--success)';
+                    fb.innerText = "Looks good! 請對照答案確認邏輯。";
                 } else {
-                    isCorrect = false;
+                    fb.style.backgroundColor = 'rgba(243, 139, 168, 0.2)';
+                    fb.style.color = 'var(--error)';
+                    fb.innerText = "寫點東西吧！Empty code is no vibe.";
                 }
-            } else {
-                isCorrect = item.answer.includes(userAns) || item.answer.includes(userAns.replace(/'/g, '"'));
+                return;
             }
 
-            if (isCorrect) {
-                feedback.style.color = "var(--success-color)";
-                feedback.textContent = "✨ 答對了！Vibe check passed.";
+            // 一般題目的簡易檢查 (包含即可)
+            if (userIn === correctAns || userIn.includes(correctAns)) {
+                fb.style.backgroundColor = 'rgba(166, 227, 161, 0.2)';
+                fb.style.color = 'var(--success)';
+                fb.innerHTML = "✨ Correct! Vibe check passed.";
             } else {
-                feedback.style.color = "var(--error-color)";
-                feedback.textContent = "❌ 再試試看？或者直接看答案學起來。";
-            }
-            feedback.style.display = 'block';
-            updateProgress();
-        }
-
-        function toggleAnswer(index) {
-            const ansDiv = document.getElementById(`answer-${index}`);
-            if (ansDiv.style.display === 'none' || ansDiv.style.display === '') {
-                ansDiv.style.display = 'block';
-            } else {
-                ansDiv.style.display = 'none';
+                fb.style.backgroundColor = 'rgba(243, 139, 168, 0.2)';
+                fb.style.color = 'var(--error)';
+                fb.innerHTML = "❌ 沒關係，再試一次或直接看答案。";
             }
         }
 
-        function updateProgress() {
-            // Simple progress tracking
-            const inputs = document.querySelectorAll('input, textarea');
-            let filled = 0;
-            inputs.forEach(input => {
-                if(input.value.trim() !== '') filled++;
-            });
-            const percent = (filled / quizData.length) * 100;
-            progressBar.style.width = percent + '%';
-        }
-
-        renderQuiz();
+        // 初始化頁面時先產生一組
+        generateNewQuiz();
     </script>
 </body>
 </html>
