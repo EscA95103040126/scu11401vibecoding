@@ -290,7 +290,7 @@
                 ans: ["set"],
                 exp: "set() 會建立集合，集合特性是不包含重複元素。"
             },
-            // --- 這裡開始是修正合併後的 50 題 ---
+            // --- 之前合併的 50 題 (部分顯示，已保留完整內容) ---
             {
                 "tags": ["變數"],
                 "type": "填空",
@@ -690,6 +690,279 @@
                 "code": "s = 'HELLO'\nprint(s.____())",
                 "ans": ["lower"],
                 "exp": "lower() 方法將字串中的大寫字母轉為小寫。"
+            },
+            // --- 以下是新增的 34 題 ---
+            {
+                "tags": ["變數"],
+                "type": "填空",
+                "q": "在 Python 中，什麼運算子用於計算 x 的 y 次方？",
+                "code": "x = 2\ny = 3\nprint(x __ y) # 輸出 8",
+                "ans": ["**"],
+                "exp": "** 運算子用於指數運算。"
+            },
+            {
+                "tags": ["變數"],
+                "type": "填空",
+                "q": "請填寫函式名稱，將浮點數 3.14 轉換為整數 3。",
+                "code": "f = 3.14\ni = ____(f)",
+                "ans": ["int"],
+                "exp": "int() 函式可將資料轉換為整數，小數部分會直接捨去。"
+            },
+            {
+                "tags": ["變數"],
+                "type": "填空",
+                "q": "若要檢查變數 x 的資料型態，應使用什麼函式？",
+                "code": "x = 'Hello'\nprint(____(x))",
+                "ans": ["type"],
+                "exp": "type() 函式用於回傳物件的資料型態。"
+            },
+            {
+                "tags": ["變數"],
+                "type": "除錯",
+                "q": "以下變數命名哪一個是不合法的？",
+                "code": "user_name = 'Tom'\n2nd_place = 'Silver'\n_height = 180",
+                "ans": ["2nd_place"],
+                "exp": "Python 變數名稱不能以數字開頭。"
+            },
+            {
+                "tags": ["變數"],
+                "type": "填空",
+                "q": "請問布林運算 `True and False` 的結果為何？",
+                "code": "print(True and False)",
+                "ans": ["False"],
+                "exp": "and 運算子只有在兩側皆為 True 時才回傳 True。"
+            },
+            {
+                "tags": ["變數"],
+                "type": "填空",
+                "q": "使用 f-string 格式化字串時，變數應放在什麼符號內？",
+                "code": "name = 'Alice'\nprint(f'Hi, {__}')",
+                "ans": ["{}"],
+                "exp": "f-string 使用大括號 {} 包裹變數名稱。"
+            },
+            {
+                "tags": ["List"],
+                "type": "填空",
+                "q": "若要取得 List 的最後一個元素，索引值應填入多少？",
+                "code": "lst = [10, 20, 30]\nprint(lst[__])",
+                "ans": ["-1"],
+                "exp": "索引 -1 代表列表的倒數第一個元素。"
+            },
+            {
+                "tags": ["List"],
+                "type": "填空",
+                "q": "請填寫方法名稱，將元素 5 新增到 List 的末端。",
+                "code": "nums = [1, 2, 3]\nnums.____(5)",
+                "ans": ["append"],
+                "exp": "append() 方法用於在列表尾端添加元素。"
+            },
+            {
+                "tags": ["List"],
+                "type": "除錯",
+                "q": "若要刪除 List 中值為 'a' 的第一個元素，應使用 remove 還是 del？",
+                "code": "chars = ['a', 'b', 'a']\n# 刪除第一個 'a'",
+                "ans": ["remove"],
+                "exp": "remove('a') 會刪除第一個出現的值；del 是依索引刪除。"
+            },
+            {
+                "tags": ["List"],
+                "type": "填空",
+                "q": "請問切片 `lst[1:3]` 會包含索引 3 的元素嗎？(Yes/No)",
+                "code": "lst = [0, 1, 2, 3, 4]",
+                "ans": ["No"],
+                "exp": "切片 [start:end] 包含 start 但不包含 end 索引。"
+            },
+            {
+                "tags": ["List"],
+                "type": "填空",
+                "q": "請填寫方法名稱，計算 List 中某個元素出現的次數。",
+                "code": "nums = [1, 1, 2]\nc = nums.____(1)",
+                "ans": ["count"],
+                "exp": "count(x) 方法回傳 x 在列表中出現的次數。"
+            },
+            {
+                "tags": ["List"],
+                "type": "填空",
+                "q": "請問 len([1, [2, 3]]) 的結果為何？",
+                "code": "lst = [1, [2, 3]]\nprint(len(lst))",
+                "ans": ["2"],
+                "exp": "該列表包含兩個元素：整數 1 和列表 [2, 3]。"
+            },
+            {
+                "tags": ["List"],
+                "type": "填空",
+                "q": "將字串 'A-B-C' 以 '-' 分割成 List，應使用什麼方法？",
+                "code": "s = 'A-B-C'\nlst = s.____('-')",
+                "ans": ["split"],
+                "exp": "split() 方法用於將字串依指定分隔符切割成列表。"
+            },
+            {
+                "tags": ["Dictionary"],
+                "type": "填空",
+                "q": "存取 Dictionary 中不存在的 Key 會產生什麼錯誤？",
+                "code": "d = {'a': 1}\nprint(d['b'])",
+                "ans": ["KeyError"],
+                "exp": "直接使用 [] 存取不存在的鍵會引發 KeyError。"
+            },
+            {
+                "tags": ["Dictionary"],
+                "type": "填空",
+                "q": "若要避免 KeyError，應使用哪個方法來取得值？",
+                "code": "d = {'a': 1}\nval = d.____('b', 0)",
+                "ans": ["get"],
+                "exp": "get() 方法在鍵不存在時會回傳 None 或指定的預設值。"
+            },
+            {
+                "tags": ["Dictionary"],
+                "type": "填空",
+                "q": "請填寫方法名稱，取得 Dictionary 中所有的鍵值對 (Key-Value pairs)。",
+                "code": "d = {'a': 1}\nfor k, v in d.____():\n    pass",
+                "ans": ["items"],
+                "exp": "items() 方法回傳包含 (key, value) 元組的視圖。"
+            },
+            {
+                "tags": ["Dictionary"],
+                "type": "除錯",
+                "q": "Dictionary 的 Key 必須是哪種特性的資料型態？(Mutable/Immutable)",
+                "code": "d = {[1, 2]: 'value'} # 這行會報錯",
+                "ans": ["Immutable"],
+                "exp": "Key 必須是不可變的 (Immutable)，如字串、數值或 Tuple；List 是可變的，不能當 Key。"
+            },
+            {
+                "tags": ["Dictionary"],
+                "type": "填空",
+                "q": "請填寫關鍵字，用於刪除 Dictionary 中的指定鍵值對。",
+                "code": "d = {'a': 1, 'b': 2}\n____ d['a']",
+                "ans": ["del"],
+                "exp": "del 關鍵字可用於刪除字典中的特定鍵。"
+            },
+            {
+                "tags": ["Dictionary"],
+                "type": "填空",
+                "q": "請問 d1.update(d2) 會回傳新字典還是直接修改 d1？",
+                "code": "d1 = {'a': 1}\nd2 = {'b': 2}\nd1.update(d2)",
+                "ans": ["直接修改 d1"],
+                "exp": "update() 是原地 (in-place) 修改，不會回傳新字典。"
+            },
+            {
+                "tags": ["Dictionary"],
+                "type": "填空",
+                "q": "建立空字典的語法為何？",
+                "code": "empty_dict = ____",
+                "ans": ["{}"],
+                "exp": "{} 或 dict() 皆可建立空字典。"
+            },
+            {
+                "tags": ["迴圈"],
+                "type": "填空",
+                "q": "range(5) 會產生幾個數字？",
+                "code": "for i in range(5):\n    print(i)",
+                "ans": ["5"],
+                "exp": "產生 0, 1, 2, 3, 4，共 5 個數字。"
+            },
+            {
+                "tags": ["迴圈"],
+                "type": "填空",
+                "q": "若要跳過本次迴圈的剩餘程式碼，直接進入下一次迭代，應使用什麼關鍵字？",
+                "code": "for i in range(5):\n    if i == 2:\n        ____",
+                "ans": ["continue"],
+                "exp": "continue 會跳過當次迭代，break 則是結束整個迴圈。"
+            },
+            {
+                "tags": ["迴圈"],
+                "type": "填空",
+                "q": "While 迴圈會在條件為 ____ 時繼續執行。",
+                "code": "while condition:\n    pass",
+                "ans": ["True"],
+                "exp": "While 迴圈在條件判斷為 True 時重複執行。"
+            },
+            {
+                "tags": ["迴圈"],
+                "type": "除錯",
+                "q": "這段程式碼會造成無限迴圈，因為少了什麼？",
+                "code": "i = 0\nwhile i < 5:\n    print(i)",
+                "ans": ["i += 1"],
+                "exp": "迴圈內沒有更新變數 i，導致條件永遠成立。"
+            },
+            {
+                "tags": ["迴圈"],
+                "type": "填空",
+                "q": "請問 range(1, 10, 2) 的最後一個數字是多少？",
+                "code": "print(list(range(1, 10, 2)))",
+                "ans": ["9"],
+                "exp": "從 1 開始每次加 2：1, 3, 5, 7, 9。"
+            },
+            {
+                "tags": ["迴圈"],
+                "type": "填空",
+                "q": "若要同時取得 List 的索引和元素值，應使用什麼函式？",
+                "code": "fruits = ['apple', 'banana']\nfor i, fruit in ____(fruits):",
+                "ans": ["enumerate"],
+                "exp": "enumerate() 會回傳 (index, value) 的組合。"
+            },
+            {
+                "tags": ["迴圈"],
+                "type": "填空",
+                "q": "巢狀迴圈中，外層執行 3 次，內層執行 2 次，總共執行幾次？",
+                "code": "for i in range(3):\n    for j in range(2):\n        print('Hi')",
+                "ans": ["6"],
+                "exp": "3 * 2 = 6 次。"
+            },
+            {
+                "tags": ["Function"],
+                "type": "填空",
+                "q": "定義函式時使用的關鍵字為何？",
+                "code": "____ my_func():\n    pass",
+                "ans": ["def"],
+                "exp": "def 用於定義函式 (define)。"
+            },
+            {
+                "tags": ["Function"],
+                "type": "填空",
+                "q": "若函式沒有 return 敘述，預設會回傳什麼？",
+                "code": "def func():\n    print('Hi')\nprint(func())",
+                "ans": ["None"],
+                "exp": "Python 函式預設回傳 None。"
+            },
+            {
+                "tags": ["Function"],
+                "type": "除錯",
+                "q": "請問這段程式碼中，參數順序哪裡有誤？",
+                "code": "def func(a=1, b):\n    return a + b",
+                "ans": ["預設參數必須在後"],
+                "exp": "擁有預設值的參數必須放在沒有預設值的參數之後 (def func(b, a=1))。"
+            },
+            {
+                "tags": ["Function"],
+                "type": "填空",
+                "q": "用來接收任意數量「位置參數」的符號是什麼？",
+                "code": "def func(____args):\n    print(args)",
+                "ans": ["*"],
+                "exp": "*args 將多個位置參數打包成 Tuple。"
+            },
+            {
+                "tags": ["Function"],
+                "type": "填空",
+                "q": "用來接收任意數量「關鍵字參數」的符號是什麼？",
+                "code": "def func(____kwargs):\n    print(kwargs)",
+                "ans": ["**"],
+                "exp": "**kwargs 將多個關鍵字參數打包成 Dictionary。"
+            },
+            {
+                "tags": ["Function"],
+                "type": "填空",
+                "q": "請問 lambda 函式 `lambda x: x*2` 對輸入 5 的輸出為何？",
+                "code": "f = lambda x: x * 2\nprint(f(5))",
+                "ans": ["10"],
+                "exp": "Lambda 是匿名函式，此處計算 5 * 2。"
+            },
+            {
+                "tags": ["Function"],
+                "type": "填空",
+                "q": "函式內定義的變數，在函式外部無法直接存取，這是什麼概念？",
+                "code": "def func():\n    local_var = 10",
+                "ans": ["Scope"],
+                "exp": "這是變數的作用域 (Scope)，函式內為區域變數 (Local Variable)。"
             }
         ];
 
