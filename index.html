@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Python 期末隨機題庫系統</title>
+    <title>Python 期末完整題庫系統</title>
     <style>
         :root {
             --bg-color: #1e1e2e;
@@ -144,10 +144,10 @@
 <body>
 
     <div class="header-area">
-        <h1>🎲 Python 期末隨機題庫</h1>
-        <p>每次點擊「換一組題目」，隨機抽取 8 題進行練習</p>
+        <h1>🎲 Python 期末完整題庫</h1>
+        <p>目前顯示所有題目，共 <span id="total-count" style="color: var(--highlight); font-weight: bold;">0</span> 題</p>
         <div class="controls">
-            <button class="refresh-btn" onclick="generateNewQuiz()">🔄 換一組題目 (Refresh)</button>
+            <button class="refresh-btn" onclick="generateNewQuiz()">🔄 重新洗牌順序 (Re-shuffle)</button>
         </div>
     </div>
 
@@ -714,13 +714,18 @@
 
         function generateNewQuiz() {
             const container = document.getElementById('quiz-container');
+            const totalCountSpan = document.getElementById('total-count');
+            
             container.innerHTML = ''; // 清空舊題目
 
             // 1. 複製題庫並洗牌
             const shuffled = shuffleArray([...questionBank]);
             
-            // 2. 取出前 8 題 (數量可自己改)
-            const selectedQuestions = shuffled.slice(0, 8);
+            // 2. 顯示全部題目 (不再切片)
+            const selectedQuestions = shuffled; 
+
+            // 更新畫面上的題目數量
+            totalCountSpan.innerText = selectedQuestions.length;
 
             // 3. 渲染畫面
             selectedQuestions.forEach((item, index) => {
